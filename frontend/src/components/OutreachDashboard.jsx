@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  Search, Filter, Send, MoreVertical, Paperclip, Smile, 
+import {
+  Search, Filter, Send, MoreVertical, Paperclip, Smile,
   User, CheckCheck, Clock, Mail, Globe, BrainCircuit,
   MessageSquare, ChevronRight, Loader2
 } from 'lucide-react';
@@ -31,7 +31,7 @@ const OutreachDashboard = ({ token }) => {
     }
   };
 
-  const filteredMessages = messages.filter(m => 
+  const filteredMessages = messages.filter(m =>
     m.target_country.toLowerCase().includes(searchQuery.toLowerCase()) ||
     m.commodity.toLowerCase().includes(searchQuery.toLowerCase())
   );
@@ -58,8 +58,8 @@ const OutreachDashboard = ({ token }) => {
           </div>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-            <input 
-              type="text" 
+            <input
+              type="text"
               placeholder="Search or start new chat"
               className="w-full pl-10 pr-4 py-2.5 rounded-full bg-white border-none focus:ring-1 focus:ring-[var(--color-purple-500)] outline-none text-sm shadow-sm"
               value={searchQuery}
@@ -75,7 +75,7 @@ const OutreachDashboard = ({ token }) => {
             </div>
           ) : (
             filteredMessages.map((msg) => (
-              <div 
+              <div
                 key={msg._id}
                 onClick={() => setSelectedChat(msg)}
                 className={`p-4 mx-4 mb-2 rounded-2xl cursor-pointer transition-all flex items-center gap-4 ${selectedChat?._id === msg._id ? 'bg-white shadow-md border-l-4 border-[var(--color-purple-500)]' : 'hover:bg-white/50'}`}
@@ -127,7 +127,7 @@ const OutreachDashboard = ({ token }) => {
             <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-[#E5DDD5] relative">
               {/* WhatsApp background pattern (abstracted) */}
               <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/cubes.png")' }}></div>
-              
+
               <div className="flex flex-col items-center mb-8 relative z-10">
                 <span className="px-3 py-1 bg-[#d1f4ff] rounded-lg text-[11px] font-bold text-blue-800 uppercase tracking-widest shadow-sm">
                   Communication Started {new Date(selectedChat.createdAt).toLocaleDateString()}
@@ -155,7 +155,7 @@ const OutreachDashboard = ({ token }) => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="flex justify-start">
                 <div className="max-w-xs bg-white border border-gray-100 p-4 rounded-2xl rounded-tl-none shadow-sm italic text-gray-400 text-xs">
                   Awaiting buyer response...
@@ -166,10 +166,10 @@ const OutreachDashboard = ({ token }) => {
             {/* Input Area */}
             <div className="p-6 bg-white border-t border-gray-100">
               <div className="flex items-center gap-4 bg-gray-50 p-2 rounded-2xl border border-gray-100">
-                <button className="p-2 text-gray-400 hover:text-gray-600"><Smile size={20}/></button>
-                <button className="p-2 text-gray-400 hover:text-gray-600"><Paperclip size={20}/></button>
-                <input 
-                  type="text" 
+                <button className="p-2 text-gray-400 hover:text-gray-600"><Smile size={20} /></button>
+                <button className="p-2 text-gray-400 hover:text-gray-600"><Paperclip size={20} /></button>
+                <input
+                  type="text"
                   placeholder="Type a follow-up message..."
                   className="flex-1 bg-transparent border-none outline-none text-sm py-2"
                 />

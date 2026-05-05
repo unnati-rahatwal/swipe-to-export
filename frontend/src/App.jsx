@@ -80,7 +80,7 @@ function App() {
   const handleSwipe = async (direction) => {
     if (currentIndex >= recommendations.length) return;
     const currentRec = recommendations[currentIndex];
-    
+
     // Advance index immediately for snappy UI
     setCurrentIndex(prev => prev + 1);
 
@@ -91,7 +91,7 @@ function App() {
       setShowSkipFeedback(true);
       setSelectedLead(null);
     }
-    
+
     try {
       await axios.post('http://localhost:5001/api/swipe', {
         user_country: formData.country,
@@ -128,7 +128,7 @@ function App() {
     <div className="min-h-screen flex flex-col items-center bg-[var(--color-cream)] text-[var(--color-ink)]">
       {view !== 'landing' && (
         <nav className="w-full glass p-4 flex justify-between items-center sticky top-0 z-50 border-b border-[var(--color-ink)]/10">
-          <h1 
+          <h1
             className="text-2xl font-bold font-playfair text-[var(--color-ink)] flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
             onClick={() => setView('landing')}
             title="Go to Landing Page"
@@ -163,7 +163,7 @@ function App() {
                 </button>
               </>
             ) : (
-              <button 
+              <button
                 onClick={() => setShowAuthModal(true)}
                 className="bg-[var(--color-purple-500)] text-white px-4 py-2 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity"
               >
@@ -176,14 +176,14 @@ function App() {
 
       <main className={`flex-1 w-full flex flex-col items-center justify-center ${view === 'landing' ? '' : 'max-w-6xl p-6'}`}>
         {view === 'landing' && (
-          <LandingPage 
+          <LandingPage
             onLogin={() => {
               if (token) {
                 setView('setup');
               } else {
                 setShowAuthModal(true);
               }
-            }} 
+            }}
           />
         )}
 
@@ -191,8 +191,8 @@ function App() {
           <div className="glass p-8 rounded-3xl w-full max-w-md animate-fade-in card-shadow relative overflow-hidden">
             {/* Progress Bar */}
             <div className="absolute top-0 left-0 w-full h-1.5 bg-gray-100">
-              <div 
-                className="h-full bg-[#8B5A2B] transition-all duration-500 ease-out" 
+              <div
+                className="h-full bg-[#8B5A2B] transition-all duration-500 ease-out"
                 style={{ width: `${(onboardingStep / 3) * 100}%` }}
               ></div>
             </div>
@@ -205,18 +205,18 @@ function App() {
                 {onboardingStep === 3 && 'Your Objectives'}
               </h2>
             </div>
-            
+
             <div className="space-y-5">
               {onboardingStep === 1 && (
                 <div className="animate-fade-in relative z-20">
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Select your operating country</label>
-                  <input 
+                  <input
                     type="text"
                     placeholder="Type or select country"
                     className="w-full p-4 rounded-xl bg-gray-50/50 border border-gray-200 text-gray-900 focus:border-[#8B5A2B] focus:ring-1 focus:ring-[#8B5A2B] outline-none transition-all shadow-sm text-lg"
                     value={formData.country}
                     onChange={e => {
-                      setFormData({...formData, country: e.target.value});
+                      setFormData({ ...formData, country: e.target.value });
                       setShowCountries(true);
                     }}
                     onFocus={() => setShowCountries(true)}
@@ -227,24 +227,24 @@ function App() {
                       {metadata.countries
                         .filter(c => c.toLowerCase().includes(formData.country.toLowerCase()))
                         .map(c => (
-                          <div 
-                            key={c} 
+                          <div
+                            key={c}
                             className="px-4 py-3 hover:bg-gray-50 cursor-pointer text-gray-700 font-medium border-b border-gray-50 last:border-0 transition-colors"
                             onClick={() => {
-                              setFormData({...formData, country: c});
+                              setFormData({ ...formData, country: c });
                               setShowCountries(false);
                             }}
                           >
                             {c}
                           </div>
-                      ))}
+                        ))}
                       {metadata.countries.filter(c => c.toLowerCase().includes(formData.country.toLowerCase())).length === 0 && (
                         <div className="px-4 py-3 text-gray-400 italic">No countries found</div>
                       )}
                     </div>
                   )}
 
-                  <button 
+                  <button
                     onClick={() => setOnboardingStep(2)}
                     disabled={!formData.country}
                     className="w-full mt-8 py-4 rounded-xl bg-[#1A1A1A] text-white font-semibold hover:bg-black disabled:opacity-50 transition-all shadow-md flex items-center justify-center gap-2"
@@ -257,13 +257,13 @@ function App() {
               {onboardingStep === 2 && (
                 <div className="animate-fade-in relative z-10">
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Select the commodity you deal in</label>
-                  <input 
+                  <input
                     type="text"
                     placeholder="Type or select commodity"
                     className="w-full p-4 rounded-xl bg-gray-50/50 border border-gray-200 text-gray-900 focus:border-[#8B5A2B] focus:ring-1 focus:ring-[#8B5A2B] outline-none transition-all shadow-sm text-lg"
                     value={formData.commodity}
                     onChange={e => {
-                      setFormData({...formData, commodity: e.target.value});
+                      setFormData({ ...formData, commodity: e.target.value });
                       setShowCommodities(true);
                     }}
                     onFocus={() => setShowCommodities(true)}
@@ -274,17 +274,17 @@ function App() {
                       {metadata.commodities
                         .filter(c => c.toLowerCase().includes(formData.commodity.toLowerCase()))
                         .map(c => (
-                          <div 
-                            key={c} 
+                          <div
+                            key={c}
                             className="px-4 py-3 hover:bg-gray-50 cursor-pointer text-gray-700 font-medium border-b border-gray-50 last:border-0 transition-colors"
                             onClick={() => {
-                              setFormData({...formData, commodity: c});
+                              setFormData({ ...formData, commodity: c });
                               setShowCommodities(false);
                             }}
                           >
                             {c}
                           </div>
-                      ))}
+                        ))}
                       {metadata.commodities.filter(c => c.toLowerCase().includes(formData.commodity.toLowerCase())).length === 0 && (
                         <div className="px-4 py-3 text-gray-400 italic">No commodities found</div>
                       )}
@@ -292,13 +292,13 @@ function App() {
                   )}
 
                   <div className="flex gap-3 mt-8">
-                    <button 
+                    <button
                       onClick={() => setOnboardingStep(1)}
                       className="py-4 px-6 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-all"
                     >
                       Back
                     </button>
-                    <button 
+                    <button
                       onClick={() => setOnboardingStep(3)}
                       disabled={!formData.commodity}
                       className="flex-1 py-4 rounded-xl bg-[#1A1A1A] text-white font-semibold hover:bg-black disabled:opacity-50 transition-all shadow-md"
@@ -313,15 +313,15 @@ function App() {
                 <div className="animate-fade-in">
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Are you looking to Export or Import?</label>
                   <div className="flex gap-3">
-                    <button 
+                    <button
                       className={`flex-1 py-4 rounded-xl font-bold transition-all border-2 ${formData.flow === 'Export' ? 'bg-[#8B5A2B]/10 text-[#8B5A2B] border-[#8B5A2B]' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'}`}
-                      onClick={() => { setFormData({...formData, flow: 'Export'}); setAiRanking(''); }}
+                      onClick={() => { setFormData({ ...formData, flow: 'Export' }); setAiRanking(''); }}
                     >
                       Export
                     </button>
-                    <button 
+                    <button
                       className={`flex-1 py-4 rounded-xl font-bold transition-all border-2 ${formData.flow === 'Import' ? 'bg-[#4A7C59]/10 text-[#4A7C59] border-[#4A7C59]' : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'}`}
-                      onClick={() => { setFormData({...formData, flow: 'Import'}); setAiRanking(''); }}
+                      onClick={() => { setFormData({ ...formData, flow: 'Import' }); setAiRanking(''); }}
                     >
                       Import
                     </button>
@@ -336,7 +336,7 @@ function App() {
                       <BrainCircuit size={18} />
                       {rankingLoading ? 'Analyzing Market...' : 'Need AI Help Deciding?'}
                     </button>
-                    
+
                     {aiRanking && (
                       <div className="mt-4 p-5 bg-[#4A7C59]/5 rounded-2xl border border-[#4A7C59]/10 text-sm text-gray-700 leading-relaxed shadow-sm">
                         <p className="font-bold text-[#4A7C59] mb-2 uppercase text-xs tracking-wider flex items-center gap-1.5">
@@ -348,13 +348,13 @@ function App() {
                   </div>
 
                   <div className="flex gap-3 mt-8">
-                    <button 
+                    <button
                       onClick={() => setOnboardingStep(2)}
                       className="py-4 px-6 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-all"
                     >
                       Back
                     </button>
-                    <button 
+                    <button
                       onClick={startMatchmaking}
                       disabled={loading || !formData.country || !formData.commodity}
                       className="flex-1 py-4 rounded-xl bg-gradient-to-r from-[#1A1A1A] to-black text-white font-bold hover:opacity-90 disabled:opacity-50 transition-all shadow-xl hover:shadow-2xl hover:-translate-y-1"
@@ -372,9 +372,9 @@ function App() {
           <div className="w-full max-w-lg h-[650px] flex items-center justify-center relative p-12">
             <div className="absolute inset-0 bg-[#F2EDE4] rounded-[4rem] border border-white/50 shadow-[inset_0_2px_10px_rgba(0,0,0,0.02)]"></div>
             {currentIndex < recommendations.length ? (
-              <SwipeCard 
+              <SwipeCard
                 key={currentIndex}
-                recommendation={recommendations[currentIndex]} 
+                recommendation={recommendations[currentIndex]}
                 onSwipe={handleSwipe}
                 token={token}
                 userCountry={formData.country}
@@ -384,23 +384,23 @@ function App() {
                 <h3 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">No more partners</h3>
                 <p className="mb-8 text-sm font-medium text-gray-500">You've reviewed all top recommendations for this commodity.</p>
                 <div className="flex flex-col gap-3">
-                  <button 
+                  <button
                     onClick={() => {
                       setCurrentIndex(0);
                       startMatchmaking();
-                    }} 
+                    }}
                     className="w-full font-bold text-white px-6 py-3.5 bg-[#8B5A2B] rounded-xl transition-all hover:bg-[#6b4521] shadow-lg flex items-center justify-center gap-2"
                   >
                     <RefreshCw size={18} /> Refresh Matches
                   </button>
-                  <button 
-                    onClick={() => setView('dashboard')} 
+                  <button
+                    onClick={() => setView('dashboard')}
                     className="w-full font-bold text-gray-800 px-6 py-3.5 bg-white rounded-xl border border-gray-100 transition-all hover:bg-gray-50 shadow-md flex items-center justify-center gap-2"
                   >
                     <LayoutDashboard size={18} /> Portfolio & Strategy
                   </button>
-                  <button 
-                    onClick={() => setView('analytics')} 
+                  <button
+                    onClick={() => setView('analytics')}
                     className="w-full font-bold text-[#8B5A2B] px-6 py-3.5 bg-[#8B5A2B]/10 rounded-xl transition-all hover:bg-[#8B5A2B]/20 flex items-center justify-center gap-2"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
@@ -409,7 +409,7 @@ function App() {
                 </div>
               </div>
             )}
-            
+
             <AnimatePresence>
               {showSkipFeedback && (
                 <SkipFeedback onDismiss={() => setShowSkipFeedback(false)} />
@@ -431,31 +431,31 @@ function App() {
         )}
 
         {view === 'settings' && (
-          <ProfileSettings 
-            username={user} 
-            onLogout={() => { setUser(null); setToken(null); setView('landing'); }} 
+          <ProfileSettings
+            username={user}
+            onLogout={() => { setUser(null); setToken(null); setView('landing'); }}
           />
         )}
 
         <AnimatePresence>
           {selectedLead && (
-            <DecisionPanel 
-              lead={selectedLead} 
+            <DecisionPanel
+              lead={selectedLead}
               token={token}
-              onClose={() => setSelectedLead(null)} 
+              onClose={() => setSelectedLead(null)}
               onSent={() => {
                 setSelectedLead(null);
                 setView('messages');
               }}
               onSave={() => {
                 setSelectedLead(null);
-              }} 
+              }}
             />
           )}
         </AnimatePresence>
 
-        <AuthModal 
-          isOpen={showAuthModal} 
+        <AuthModal
+          isOpen={showAuthModal}
           onClose={() => setShowAuthModal(false)}
           onAuthSuccess={(data) => {
             setToken(data.token);

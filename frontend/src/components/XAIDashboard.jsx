@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { 
-  BrainCircuit, Activity, ShieldCheck, Zap, TrendingUp, Info, 
-  BarChart3, Layers, Database, Compass, CheckCircle2 
+import {
+  BrainCircuit, Activity, ShieldCheck, Zap, TrendingUp, Info,
+  BarChart3, Layers, Database, Compass, CheckCircle2
 } from 'lucide-react';
 
 export default function XAIDashboard({ userCountry, token }) {
@@ -12,7 +12,7 @@ export default function XAIDashboard({ userCountry, token }) {
 
   useEffect(() => {
     if (!token) return;
-    
+
     const fetchData = async () => {
       try {
         const [analysisRes, historyRes] = await Promise.all([
@@ -67,7 +67,7 @@ export default function XAIDashboard({ userCountry, token }) {
                   </p>
                   <div className="flex items-center gap-4 pt-4 border-t border-gray-50">
                     <div className="flex -space-x-2">
-                      {[1,2,3].map(i => <div key={i} className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-gray-400">D{i}</div>)}
+                      {[1, 2, 3].map(i => <div key={i} className="w-8 h-8 rounded-full bg-gray-100 border-2 border-white flex items-center justify-center text-[10px] font-bold text-gray-400">D{i}</div>)}
                     </div>
                     <p className="text-xs text-gray-400 font-medium">Insights generated from {history.length} active trade matches.</p>
                   </div>
@@ -78,7 +78,7 @@ export default function XAIDashboard({ userCountry, token }) {
 
           <div className="bg-white p-8 rounded-[32px] border border-gray-100 card-shadow">
             <h3 className="text-xl font-bold text-[var(--color-ink)] font-playfair mb-6 flex items-center gap-2">
-              <Compass size={20} className="text-[var(--color-gold)]"/> Actionable Strategy: How to Improve
+              <Compass size={20} className="text-[var(--color-gold)]" /> Actionable Strategy: How to Improve
             </h3>
             <div className="space-y-4">
               <div className="p-5 bg-[var(--color-gold)]/5 rounded-2xl border border-[var(--color-gold)]/10">
@@ -120,7 +120,7 @@ export default function XAIDashboard({ userCountry, token }) {
           </div>
 
           <div className="bg-white p-8 rounded-[32px] border border-gray-100 card-shadow">
-             <h4 className="text-xs font-bold text-[var(--color-ink)]/60 uppercase tracking-widest mb-6 flex items-center justify-between">
+            <h4 className="text-xs font-bold text-[var(--color-ink)]/60 uppercase tracking-widest mb-6 flex items-center justify-between">
               Active Strategy <span>{history.length} ITEMS</span>
             </h4>
             <div className="space-y-3">

@@ -13,7 +13,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
     e.preventDefault();
     setLoading(true);
     setError('');
-    
+
     const endpoint = isLogin ? 'login' : 'register';
     try {
       const res = await axios.post(`http://localhost:5001/api/${endpoint}`, formData);
@@ -30,15 +30,15 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         onClick={onClose}
       />
-      
-      <motion.div 
+
+      <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -46,8 +46,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
       >
         {/* Header Decor */}
         <div className={`h-2 w-full bg-gradient-to-r ${isLogin ? 'from-[var(--color-purple-500)] to-[var(--color-pink-400)]' : 'from-[var(--color-gold)] to-[var(--color-purple-500)]'}`} />
-        
-        <button 
+
+        <button
           onClick={onClose}
           className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 transition-colors text-gray-400 hover:text-gray-900"
         >
@@ -69,7 +69,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
               <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">Username</label>
               <div className="relative">
                 <User className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input 
+                <input
                   type="text"
                   required
                   placeholder="Enter your username"
@@ -84,7 +84,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
               <label className="text-sm font-bold text-gray-700 uppercase tracking-wider ml-1">Password</label>
               <div className="relative">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-                <input 
+                <input
                   type="password"
                   required
                   placeholder="••••••••"
@@ -96,7 +96,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
             </div>
 
             {error && (
-              <motion.p 
+              <motion.p
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="text-red-500 text-sm font-bold text-center bg-red-50 py-3 rounded-xl border border-red-100"
@@ -105,7 +105,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
               </motion.p>
             )}
 
-            <button 
+            <button
               type="submit"
               disabled={loading}
               className={`w-full py-4 rounded-2xl font-bold text-white shadow-xl hover:shadow-2xl transition-all flex items-center justify-center gap-2 group ${isLogin ? 'bg-gradient-to-r from-[var(--color-purple-500)] to-[var(--color-pink-400)]' : 'bg-gradient-to-r from-[var(--color-gold)] to-[var(--color-purple-500)]'}`}
@@ -124,7 +124,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
           <div className="mt-8 text-center">
             <p className="text-gray-500 font-medium">
               {isLogin ? "Don't have an account?" : "Already have an account?"}{' '}
-              <button 
+              <button
                 onClick={() => setIsLogin(!isLogin)}
                 className="text-[var(--color-purple-500)] font-bold hover:underline"
               >

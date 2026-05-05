@@ -30,7 +30,7 @@ mongoose.connect(process.env.MONGODB_URI)
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
 // Middleware: Authenticate Token
 const authenticateToken = (req, res, next) => {
@@ -43,6 +43,23 @@ const authenticateToken = (req, res, next) => {
     req.user = user;
     next();
   });
+};
+
+// Helper: Call AI with Retry Logic for 503 errors
+const callAI = async (prompt, retries = 3, delay = 2000) => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const result = await model.generateContent(prompt);
+      return result.response.text().trim();
+    } catch (error) {
+      if (error.status === 503 && i < retries - 1) {
+        console.log(`AI 503 Error (Attempt ${i + 1}/${retries}). Retrying in ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        continue;
+      }
+      throw error;
+    }
+  }
 };
 
 // API: Register User
@@ -65,7 +82,7 @@ app.post('/api/login', async (req, res) => {
   try {
     const user = await User.findOne({ username });
     if (!user) return res.status(400).json({ error: 'Invalid credentials' });
-    
+
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ error: 'Invalid credentials' });
 
@@ -92,6 +109,7 @@ app.get('/api/metadata', async (req, res) => {
   try {
     const countries = await TradeRecord.distinct('country_or_area');
     const commodities = await TradeRecord.distinct('commodity');
+    console.log(`[Metadata] Found ${countries.length} countries and ${commodities.length} commodities`);
     res.json({ countries, commodities });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -109,7 +127,7 @@ app.post('/api/match', authenticateToken, async (req, res) => {
 
   try {
     // 1. Get all trade records for this commodity
-    const commodityRecords = await TradeRecord.find({ 
+    const commodityRecords = await TradeRecord.find({
       commodity: { $regex: new RegExp(commodity, 'i') },
       country_or_area: { $ne: country }
     });
@@ -129,7 +147,7 @@ app.post('/api/match', authenticateToken, async (req, res) => {
       const demandGap = stats.imports - stats.exports;
       const importRatio = stats.imports / (stats.exports + 1);
       const dependency = demandGap / (stats.imports + 1);
-      
+
       // Calculate a combined compatibility score (0-100)
       // Logic: Prefer countries with high demand (imports) and low competition (exports)
       let compatibility = 0;
@@ -197,14 +215,14 @@ app.post('/api/rank', async (req, res) => {
       { $limit: 5 }
     ]);
 
-    const countryDataList = topCountries.map((c, i) => `${i+1}. ${c._id} ($${(c.totalTradeUsd / 1e6).toFixed(1)}M)`).join(', ');
+    const countryDataList = topCountries.map((c, i) => `${i + 1}. ${c._id} ($${(c.totalTradeUsd / 1e6).toFixed(1)}M)`).join(', ');
 
     const prompt = `Act as a quirky, genius global trade strategist. The user is from a specific country and wants to ${flow} "${commodity}". 
     Based on our database, the top countries that ${targetFlow} this commodity are: ${countryDataList}.
     Write a highly creative, engaging, and readable 3-sentence guide. Tell them EXACTLY who they should export/import to from this list, why it's a golden opportunity, and make it sound like an insider secret to help them easily decide!`;
-    
-    const result = await model.generateContent(prompt);
-    res.json({ ranking: result.response.text().trim(), topCountries });
+
+    const result = await callAI(prompt);
+    res.json({ ranking: result, topCountries });
   } catch (error) {
     console.error('Rank error:', error);
     res.status(500).json({ error: error.message });
@@ -226,11 +244,12 @@ app.post('/api/analyze-card', authenticateToken, async (req, res) => {
     👉 WHY this buyer is suggested:
     - [Reason 1 relating to product demand]
     - [Reason 2 relating to trade volume or location]`;
-    
-    const result = await model.generateContent(prompt);
-    res.json({ analysis: result.response.text().trim() });
+
+    const result = await callAI(prompt);
+    res.json({ analysis: result });
   } catch (error) {
-    res.status(500).json({ error: 'AI Quota exceeded or error' });
+    console.error('Analyze-card error:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -260,17 +279,18 @@ app.post('/api/generate-outreach', authenticateToken, async (req, res) => {
     4. A clear call to action.
     5. Signature as "[Your Name] | Swipe-to-Export AI Assisted Outreach".`;
 
-    const result = await model.generateContent(prompt);
-    res.json({ email: result.response.text().trim() });
+    const result = await callAI(prompt);
+    res.json({ email: result });
   } catch (error) {
-    res.status(500).json({ error: 'AI Quota exceeded or error' });
+    console.error('Outreach error:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
 // API: Save Outreach Message
 app.post('/api/send-outreach', authenticateToken, async (req, res) => {
   const { target_country, commodity, messageContent, tone } = req.body;
-  
+
   if (!target_country || !commodity || !messageContent) {
     return res.status(400).json({ error: 'Missing parameters' });
   }
@@ -305,7 +325,7 @@ app.get('/api/outreach-messages', authenticateToken, async (req, res) => {
 // API: Record a Swipe and generate XAI
 app.post('/api/swipe', authenticateToken, async (req, res) => {
   const { user_country, target_country, commodity, flow, score, status } = req.body;
-  
+
   if (!user_country || !target_country || !commodity || !status) {
     return res.status(400).json({ error: 'Missing required parameters' });
   }
@@ -313,15 +333,15 @@ app.post('/api/swipe', authenticateToken, async (req, res) => {
   try {
     // Generate XAI Reason using Gemini if the status is 'liked'
     let xai_reason = "User did not show interest.";
-    
+
     if (status === 'liked') {
       const prompt = `You are an Explainable AI for a global trade matchmaking system. 
       A user from ${user_country} who wants to ${flow} ${commodity} just matched with ${target_country}.
       The historical trade volume for ${target_country} regarding this commodity is $${score}.
       Write a 2-sentence explanation of why this is a strong match, sounding professional and data-driven.`;
-      
-      const result = await model.generateContent(prompt);
-      xai_reason = result.response.text().trim();
+
+      const result = await callAI(prompt);
+      xai_reason = result;
     }
 
     const match = new MatchHistory({
@@ -365,10 +385,11 @@ app.get('/api/analyze-portfolio', authenticateToken, async (req, res) => {
     const prompt = `You are an AI Portfolio Strategist. The user has agreed to the following trade deals: ${summary}.
     Write a cohesive, 3-sentence executive summary of their overall global trade portfolio. What is their strategic focus, and are they well-diversified?`;
 
-    const result = await model.generateContent(prompt);
-    res.json({ analysis: result.response.text().trim() });
+    const result = await callAI(prompt);
+    res.json({ analysis: result });
   } catch (error) {
-    res.status(500).json({ error: 'AI Quota exceeded or error' });
+    console.error('Analyze-portfolio error:', error);
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -376,7 +397,7 @@ app.get('/api/analyze-portfolio', authenticateToken, async (req, res) => {
 app.get('/api/stats', authenticateToken, async (req, res) => {
   try {
     const userId = req.user.userId;
-    
+
     const [history, messages] = await Promise.all([
       MatchHistory.find({ userId }),
       OutreachMessage.find({ userId })
@@ -385,7 +406,7 @@ app.get('/api/stats', authenticateToken, async (req, res) => {
     const rightSwipes = history.filter(h => h.status === 'liked').length;
     const leftSwipes = history.filter(h => h.status === 'disliked').length;
     const totalViewed = history.length;
-    
+
     const regions = history.filter(h => h.status === 'liked').reduce((acc, h) => {
       acc[h.target_country] = (acc[h.target_country] || 0) + 1;
       return acc;

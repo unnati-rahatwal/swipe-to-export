@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
-import { 
-  BarChart3, TrendingUp, Users, ArrowUpRight, ArrowDownLeft, 
-  Activity, MessageSquare, Search, Send, MapPin, Tag, Clock, 
+import {
+  BarChart3, TrendingUp, Users, ArrowUpRight, ArrowDownLeft,
+  Activity, MessageSquare, Search, Send, MapPin, Tag, Clock,
   CheckCircle2, PieChart, Globe, Mail
 } from 'lucide-react';
 
@@ -28,7 +28,7 @@ export default function AnalyticsDashboard({ token }) {
       setLoading(false);
       return;
     }
-    
+
     const fetchData = async () => {
       try {
         const [historyRes, messagesRes, statsRes] = await Promise.all([
@@ -108,14 +108,14 @@ export default function AnalyticsDashboard({ token }) {
     <div className="w-full max-w-6xl mx-auto animate-fade-in pb-12 mt-4 flex flex-col h-[calc(100vh-120px)]">
       {/* Tabs */}
       <div className="flex gap-8 mb-6 border-b border-gray-200 shrink-0">
-        <button 
+        <button
           onClick={() => setActiveTab('overview')}
           className={`flex items-center gap-2 pb-4 px-2 border-b-2 font-bold transition-all ${activeTab === 'overview' ? 'border-[var(--color-gold)] text-[var(--color-gold)]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
         >
           <BarChart3 size={20} />
           Overview
         </button>
-        <button 
+        <button
           onClick={() => setActiveTab('messages')}
           className={`flex items-center gap-2 pb-4 px-2 border-b-2 font-bold transition-all ${activeTab === 'messages' ? 'border-[var(--color-gold)] text-[var(--color-gold)]' : 'border-transparent text-gray-400 hover:text-gray-600'}`}
         >
@@ -135,7 +135,7 @@ export default function AnalyticsDashboard({ token }) {
                 <div className="bg-gray-400 h-full" style={{ width: '100%' }}></div>
               </div>
             </div>
-            
+
             <div className="bg-white p-6 rounded-3xl border border-gray-100 card-shadow">
               <p className="text-xs font-bold text-[var(--color-purple-500)] uppercase tracking-widest mb-2">Accepted (Right)</p>
               <h3 className="text-3xl font-black text-[var(--color-purple-500)]">{stats.rightSwipes}</h3>
@@ -165,11 +165,11 @@ export default function AnalyticsDashboard({ token }) {
             {/* Acceptance Ratio Card */}
             <div className="bg-white p-8 rounded-3xl border border-gray-100 card-shadow">
               <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <PieChart size={20} className="text-gray-400"/> Swipe Engagement
+                <PieChart size={20} className="text-gray-400" /> Swipe Engagement
               </h3>
               <div className="flex items-center gap-8">
                 <div className="relative w-32 h-32 flex items-center justify-center shrink-0">
-                   <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                  <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                     <circle cx="18" cy="18" r="16" fill="transparent" stroke="#F1F5F9" strokeWidth="4"></circle>
                     <circle cx="18" cy="18" r="16" fill="transparent" stroke="var(--color-purple-500)" strokeWidth="4" strokeDasharray={`${stats.ratio}, 100`}></circle>
                   </svg>
@@ -195,12 +195,12 @@ export default function AnalyticsDashboard({ token }) {
             {/* Top Regions Card */}
             <div className="bg-white p-8 rounded-3xl border border-gray-100 card-shadow">
               <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-                <Globe size={20} className="text-gray-400"/> Top Target Regions
+                <Globe size={20} className="text-gray-400" /> Top Target Regions
               </h3>
               <div className="space-y-4">
                 {stats.topRegions.length > 0 ? stats.topRegions.map((region, i) => (
                   <div key={region.name} className="flex items-center gap-3">
-                    <span className="text-xs font-bold text-gray-400 w-4">{i+1}.</span>
+                    <span className="text-xs font-bold text-gray-400 w-4">{i + 1}.</span>
                     <div className="flex-1">
                       <div className="flex justify-between text-sm font-bold text-gray-700 mb-1">
                         <span>{region.name}</span>
@@ -220,8 +220,8 @@ export default function AnalyticsDashboard({ token }) {
 
           {/* Activity Logs Section */}
           <div className="bg-white p-8 rounded-3xl border border-gray-100 card-shadow">
-             <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <Activity size={20} className="text-gray-400"/> Recent Outreach Logs
+            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+              <Activity size={20} className="text-gray-400" /> Recent Outreach Logs
             </h3>
             <div className="space-y-3">
               {messages.slice(-5).reverse().map((msg, i) => (
@@ -256,9 +256,9 @@ export default function AnalyticsDashboard({ token }) {
             <div className="p-4 border-b border-gray-100 bg-white">
               <div className="relative">
                 <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input 
-                  type="text" 
-                  placeholder="Search contacts..." 
+                <input
+                  type="text"
+                  placeholder="Search contacts..."
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-gray-100 border-none outline-none text-sm text-gray-700 focus:ring-2 focus:ring-[var(--color-gold)]/20 transition-all"
                 />
               </div>
@@ -273,8 +273,8 @@ export default function AnalyticsDashboard({ token }) {
                   const isSelected = selectedContact?.id === contact.id;
 
                   return (
-                    <div 
-                      key={contact.id} 
+                    <div
+                      key={contact.id}
                       onClick={() => setSelectedContact(contact)}
                       className={`p-4 border-b border-gray-50 cursor-pointer transition-colors flex gap-3 ${isSelected ? 'bg-blue-50/50' : 'hover:bg-gray-50'}`}
                     >
@@ -349,7 +349,7 @@ export default function AnalyticsDashboard({ token }) {
               {/* Chat Input */}
               <div className="p-4 bg-white border-t border-gray-100 shrink-0">
                 <form onSubmit={handleSendMessage} className="flex items-end gap-2 bg-gray-50 p-2 rounded-2xl border border-gray-200 focus-within:border-[var(--color-gold)] focus-within:ring-1 focus-within:ring-[var(--color-gold)] transition-all">
-                  <textarea 
+                  <textarea
                     value={newMessage}
                     onChange={e => setNewMessage(e.target.value)}
                     placeholder="Type a follow-up message..."
@@ -362,7 +362,7 @@ export default function AnalyticsDashboard({ token }) {
                       }
                     }}
                   />
-                  <button 
+                  <button
                     type="submit"
                     disabled={!newMessage.trim()}
                     className="p-3 bg-[var(--color-ink)] text-white rounded-xl hover:bg-black disabled:opacity-50 transition-all shrink-0 mb-0.5 mr-0.5 shadow-sm"

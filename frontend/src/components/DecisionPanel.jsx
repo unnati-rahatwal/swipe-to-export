@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { 
-  Building2, MapPin, Tag, CheckCircle2, AlertCircle, Clock, 
-  Send, Copy, Edit2, X, Bookmark, ExternalLink, Mail, Zap, Loader2 
+import {
+  Building2, MapPin, Tag, CheckCircle2, AlertCircle, Clock,
+  Send, Copy, Edit2, X, Bookmark, ExternalLink, Mail, Zap, Loader2
 } from 'lucide-react';
 
 export default function DecisionPanel({ lead, token, onClose, onSave, onSent }) {
   const priorityScore = lead.metrics?.productMatch ? parseInt(lead.metrics.productMatch) : 85;
   const initialTone = priorityScore >= 90 ? 'Formal' : priorityScore >= 70 ? 'Friendly' : 'Direct';
-  
+
   const [emailTone, setEmailTone] = useState(initialTone);
   const [copied, setCopied] = useState(false);
   const [emailContent, setEmailContent] = useState('');
@@ -23,12 +23,12 @@ export default function DecisionPanel({ lead, token, onClose, onSave, onSent }) 
   const getFallbackEmail = (tone, lead) => {
     const subject = `Trade Opportunity: ${lead.commodity} in ${lead.target_country}`;
     const greeting = tone === 'Formal' ? 'Dear Procurement Team,' : tone === 'Friendly' ? 'Hi there,' : 'Hello,';
-    const body = tone === 'Formal' 
+    const body = tone === 'Formal'
       ? `We are writing to express our interest in establishing a long-term trade partnership for ${lead.commodity}. Our data shows significant potential for growth in the ${lead.target_country} market.`
       : tone === 'Friendly'
-      ? `We noticed the amazing work you're doing in ${lead.target_country}! We'd love to chat about how our ${lead.commodity} could help you reach even more customers.`
-      : `We are ready to ship ${lead.commodity} to ${lead.target_country}. We see high trade volumes here and want to discuss a deal.`;
-    
+        ? `We noticed the amazing work you're doing in ${lead.target_country}! We'd love to chat about how our ${lead.commodity} could help you reach even more customers.`
+        : `We are ready to ship ${lead.commodity} to ${lead.target_country}. We see high trade volumes here and want to discuss a deal.`;
+
     return `Subject: ${subject}\n\n${greeting}\n\n${body}\n\nBest regards,\n[Your Name] | Swipe-to-Export`;
   };
 
@@ -74,7 +74,7 @@ export default function DecisionPanel({ lead, token, onClose, onSave, onSent }) 
 
   // Mock derived data based on lead
   const companyName = `Apex Imports ${lead.target_country}`;
-  
+
   let priorityLabel = "Low Priority Lead";
   let priorityColor = "text-red-500";
   let priorityBg = "bg-red-50";
@@ -102,13 +102,13 @@ export default function DecisionPanel({ lead, token, onClose, onSave, onSent }) 
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm p-4 sm:p-6"
     >
-      <motion.div 
+      <motion.div
         initial={{ y: 50, scale: 0.95 }}
         animate={{ y: 0, scale: 1 }}
         exit={{ y: 20, scale: 0.95 }}
@@ -117,13 +117,13 @@ export default function DecisionPanel({ lead, token, onClose, onSave, onSent }) 
       >
         {/* Header Section */}
         <div className="bg-white p-6 pb-8 rounded-b-[32px] shadow-sm relative z-10 shrink-0">
-          <button 
+          <button
             onClick={onClose}
             className="absolute top-6 right-6 p-2 rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors"
           >
             <X size={20} />
           </button>
-          
+
           <div className="flex items-start justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
@@ -137,7 +137,7 @@ export default function DecisionPanel({ lead, token, onClose, onSave, onSent }) 
                 <span className="flex items-center gap-1.5"><Tag size={16} /> {lead.commodity}</span>
               </div>
             </div>
-            
+
             {/* Circular Progress */}
             <div className="flex flex-col items-center mr-8">
               <div className="relative w-16 h-16 flex items-center justify-center">
@@ -192,7 +192,7 @@ export default function DecisionPanel({ lead, token, onClose, onSave, onSent }) 
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Suggested Tone</p>
               <div className="flex flex-wrap gap-2">
                 {['Formal', 'Friendly', 'Direct'].map(tone => (
-                  <button 
+                  <button
                     key={tone}
                     onClick={() => generateEmail(tone)}
                     disabled={loadingEmail}
@@ -225,16 +225,16 @@ export default function DecisionPanel({ lead, token, onClose, onSave, onSent }) 
                 AI Drafted Email
               </p>
               <div className="flex items-center gap-2">
-                <button 
-                  onClick={handleCopy} 
-                  className="p-1.5 rounded-md hover:bg-white text-gray-500 transition-colors shadow-sm border border-transparent hover:border-gray-200" 
+                <button
+                  onClick={handleCopy}
+                  className="p-1.5 rounded-md hover:bg-white text-gray-500 transition-colors shadow-sm border border-transparent hover:border-gray-200"
                   title="Copy to Clipboard"
                 >
                   {copied ? <CheckCircle2 size={16} className="text-green-500" /> : <Copy size={16} />}
                 </button>
-                <button 
+                <button
                   onClick={() => document.getElementById('email-draft').focus()}
-                  className="p-1.5 rounded-md hover:bg-white text-gray-500 transition-colors shadow-sm border border-transparent hover:border-gray-200" 
+                  className="p-1.5 rounded-md hover:bg-white text-gray-500 transition-colors shadow-sm border border-transparent hover:border-gray-200"
                   title="Edit Draft"
                 >
                   <Edit2 size={16} />
@@ -250,7 +250,7 @@ export default function DecisionPanel({ lead, token, onClose, onSave, onSent }) 
                   </div>
                 </div>
               )}
-              <textarea 
+              <textarea
                 id="email-draft"
                 value={emailContent}
                 onChange={(e) => setEmailContent(e.target.value)}
@@ -267,7 +267,7 @@ export default function DecisionPanel({ lead, token, onClose, onSave, onSent }) 
             <Bookmark size={18} />
             Save Lead
           </button>
-          <button 
+          <button
             onClick={handleSendOutreach}
             disabled={sending || !emailContent}
             className="flex-1 flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[var(--color-ink)] text-white font-semibold hover:bg-black disabled:opacity-50 transition-colors shadow-md"

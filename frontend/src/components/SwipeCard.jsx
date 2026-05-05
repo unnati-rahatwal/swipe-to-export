@@ -5,15 +5,15 @@ import { motion, useMotionValue, useTransform } from 'framer-motion';
 
 export default function SwipeCard({ recommendation, onSwipe, token, userCountry }) {
   const x = useMotionValue(0);
-  
+
   // Make rotation more dramatic
   const rotate = useTransform(x, [-200, 200], [-30, 30]);
   const scale = useTransform(x, [-200, 0, 200], [0.9, 1, 0.9]);
-  
+
   // Stamp opacities
   const likeOpacity = useTransform(x, [20, 150], [0, 1]);
   const nopeOpacity = useTransform(x, [-20, -150], [0, 1]);
-  
+
   const [advice, setAdvice] = useState('');
   const [loadingAdvice, setLoadingAdvice] = useState(false);
 
@@ -39,7 +39,7 @@ export default function SwipeCard({ recommendation, onSwipe, token, userCountry 
       });
       setAdvice(res.data.analysis);
     } catch (err) {
-      setAdvice("Error getting AI advice.");
+      setAdvice(`AI Error: ${err.response?.data?.error || err.message}`);
     }
     setLoadingAdvice(false);
   };
@@ -60,14 +60,14 @@ export default function SwipeCard({ recommendation, onSwipe, token, userCountry 
       whileTap={{ scale: 0.98 }}
     >
       {/* Dramatic Stamps */}
-      <motion.div 
-        style={{ opacity: nopeOpacity }} 
+      <motion.div
+        style={{ opacity: nopeOpacity }}
         className="absolute top-12 right-8 z-20 border-4 border-red-500 text-red-500 text-4xl font-black uppercase tracking-widest px-3 py-1 rounded-xl rotate-[15deg] pointer-events-none shadow-sm bg-white/50 backdrop-blur-sm"
       >
         NOPE
       </motion.div>
-      <motion.div 
-        style={{ opacity: likeOpacity }} 
+      <motion.div
+        style={{ opacity: likeOpacity }}
         className="absolute top-12 left-8 z-20 border-4 border-[var(--color-green-400)] text-[var(--color-green-400)] text-4xl font-black uppercase tracking-widest px-3 py-1 rounded-xl -rotate-[15deg] pointer-events-none shadow-sm bg-white/50 backdrop-blur-sm"
       >
         LIKE
@@ -81,12 +81,12 @@ export default function SwipeCard({ recommendation, onSwipe, token, userCountry 
           {recommendation.score > 1000000 ? 'High Match' : 'Potential'}
         </div>
       </div>
-      
+
       <div className="flex-1 p-6 flex flex-col justify-between overflow-y-auto">
         <div>
           <p className="text-gray-500 text-sm mb-1 uppercase tracking-wider font-medium">{recommendation.flow} volume for</p>
           <p className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">{recommendation.commodity}</p>
-          
+
           <div className="grid grid-cols-2 gap-2 mb-4">
             <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 flex flex-col justify-between">
               <p className="text-xs text-gray-500 mb-1 font-medium">Product Match</p>
@@ -110,14 +110,14 @@ export default function SwipeCard({ recommendation, onSwipe, token, userCountry 
 
             <div className="bg-gray-50 p-3 rounded-xl border border-gray-100 flex flex-col justify-between col-span-2">
               <div className="flex items-center justify-between">
-                <p className="text-xs text-gray-500 font-medium flex items-center gap-1"><TrendingUp size={12}/> Trade Volume / Intent</p>
+                <p className="text-xs text-gray-500 font-medium flex items-center gap-1"><TrendingUp size={12} /> Trade Volume / Intent</p>
                 <p className="text-sm font-bold text-gray-900">{formatCurrency(recommendation.score)}</p>
               </div>
             </div>
           </div>
 
           {!advice ? (
-            <button 
+            <button
               onClick={getAdvice}
               disabled={loadingAdvice}
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-[var(--color-purple-500)]/5 text-[var(--color-purple-500)] font-medium hover:bg-[var(--color-purple-500)]/10 border border-[var(--color-purple-500)]/20 text-sm transition-colors"
@@ -131,18 +131,26 @@ export default function SwipeCard({ recommendation, onSwipe, token, userCountry 
                 <BrainCircuit size={12} /> AI Strategist
               </p>
               {advice}
+              {advice.startsWith('AI Error') && (
+                <button 
+                  onClick={(e) => { e.stopPropagation(); getAdvice(); }}
+                  className="mt-2 text-[var(--color-purple-500)] font-bold underline flex items-center gap-1 hover:text-[var(--color-purple-700)]"
+                >
+                  <Loader2 size={10} className={loadingAdvice ? "animate-spin" : ""} /> Retry Analysis
+                </button>
+              )}
             </div>
           )}
         </div>
 
         <div className="flex justify-center gap-8 pt-6 pb-2 mt-auto">
-          <button 
+          <button
             onClick={() => onSwipe('left')}
             className="w-16 h-16 rounded-full bg-white border border-gray-100 flex items-center justify-center text-gray-300 hover:text-red-500 hover:bg-red-50 hover:border-red-200 transition-all shadow-sm hover:scale-110 active:scale-95"
           >
             <X size={32} strokeWidth={2.5} />
           </button>
-          <button 
+          <button
             onClick={() => onSwipe('right')}
             className="w-16 h-16 rounded-full bg-white border border-gray-100 flex items-center justify-center text-gray-300 hover:text-[var(--color-green-400)] hover:bg-[var(--color-green-400)]/10 hover:border-[var(--color-green-400)]/20 transition-all shadow-sm hover:scale-110 active:scale-95"
           >
